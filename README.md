@@ -9,3 +9,4 @@ Port notes:
 
 - SpFilename >>underlyingFilename (This method do not exist in the original Pharo One Click image)
 - Added String >>trimBlanks to but not in the category *Aida else in *Sport
+- Updated for FileMan compatibility

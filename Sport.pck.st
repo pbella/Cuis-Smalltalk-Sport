@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #1806] on 21 August 2013 at 6:32:03.196841 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2595] on 18 December 2015 at 8:26:43.358996 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Sport' 1 0!
+!provides: 'Sport' 1 1!
 !classDefinition: #SpAbstractError category: #'Sport-Exceptions'!
 Error subclass: #SpAbstractError
 	instanceVariableNames: 'parameter'
@@ -621,14 +621,20 @@ for: aBlock onAnyExceptionDo: exceptionBlock
 	
 	^aBlock on: Exception do: exceptionBlock! !
 
-!SpFileStream methodsFor: 'initialize-release' stamp: 'JM 4/18/2007 13:54'!
+!SpFileStream methodsFor: 'initialize-release' stamp: 'pb 12/18/2015 20:10'!
 appendingToFilename: aSpFilename
+	| fe |
 	self filename: aSpFilename.
+	"FIXME - FileMan
 	underlyingStream := aSpFilename exists
 		ifTrue: [FileStream oldFileNamed: self filename asString]
 		ifFalse: [FileStream newFileNamed: self filename asString].
-"	underlyingStream guessDefaultLineEndConvention. "
-	^self! !
+		"
+	fe := self filename asString asFileEntry.
+	underlyingStream := aSpFilename exists
+		ifTrue: [ fe privateAppendStream ]
+		ifFalse: [ fe privateWriteStream ].
+	"	underlyingStream guessDefaultLineEndConvention. "! !
 
 !SpFileStream methodsFor: 'services' stamp: 'BB 1/25/2006 16:00'!
 atEnd
@@ -742,11 +748,14 @@ writingToFileNamed: aString
 	underlyingStream lineEndTransparent.
 	^self! !
 
-!SpFileStream methodsFor: 'initialize-release' stamp: 'JM 4/18/2007 14:02'!
-writingToFilename: aSpFilename 
+!SpFileStream methodsFor: 'initialize-release' stamp: 'pb 12/18/2015 20:21'!
+writingToFilename: aSpFilename
 	self filename: aSpFilename.
+	"FIXME - FileMan
 	underlyingStream := FileStream newFileNamed: self filename asString.
-	^self! !
+	"
+	"privateForceWriteStream?"
+	underlyingStream := self filename asString asFileEntry privateWriteStream.! !
 
 !SpFileStream class methodsFor: 'instance creation' stamp: 'JM 4/14/2007 19:20'!
 appendingToFilename: aSpFilename 
@@ -794,15 +803,18 @@ appendStream
 asString
 	^self filename! !
 
-!SpFilename methodsFor: 'testing' stamp: 'JM 4/26/2007 15:38'!
-exists	
+!SpFilename methodsFor: 'testing' stamp: 'pb 12/18/2015 20:24'!
+exists
 	"^a Boolean
 	I return true if the file or direcotory I represent actually exists"
-	^[(FileDirectory default fileExists: self asAbsoluteFilename asString) 
-		or: [FileDirectory default directoryExists: self asString] ]
-			on: Error, Exception 
-			do: [:ex | ^false].
-! !
+	"FIXME - FileMan
+	^ [
+	(FileDirectory default fileExists: self asAbsoluteFilename asString) or: [ FileDirectory default directoryExists: self asString ]]
+		on: Error , Exception
+		do: [ :ex |
+			^ false ].
+		"
+	^ self asAbsoluteFilename asString asFileEntry exists! !
 
 !SpFilename methodsFor: 'initialize-release' stamp: 'JM 4/18/2007 12:27'!
 named: aString 
