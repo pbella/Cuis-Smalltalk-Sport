@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2595] on 18 December 2015 at 8:26:43.358996 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2706] on 6 April 2016 at 2:36:27.006364 pm'!
 'Description Please enter a description for this package '!
-!provides: 'Sport' 1 1!
+!provides: 'Sport' 1 2!
 !classDefinition: #SpAbstractError category: #'Sport-Exceptions'!
 Error subclass: #SpAbstractError
 	instanceVariableNames: 'parameter'
@@ -938,7 +938,7 @@ isActive
 	^self underlyingSocket isConnected
 		or: [self underlyingSocket isWaitingForConnection]! !
 
-!SpSocket methodsFor: 'services-status' stamp: 'JM 4/14/2007 21:18'!
+!SpSocket methodsFor: 'services-status' stamp: 'pb 4/6/2016 14:28'!
 listenBackloggingUpTo: aNumberOfConnections
 	"^self
 	I set the socket I represent listening for incomming connections,
@@ -947,12 +947,11 @@ listenBackloggingUpTo: aNumberOfConnections
 	when I was asked to bind - and I use that now.
 	OK - I really wanter to be able to specify the interface, but that seems
 	to be broken - I get a primitive error when I try to use it"
-	
+	"FIXME - 2016-04 added interface: and it appears to work properly despite previous comment... problem with older VM?"
 	self underlyingSocket
 		listenOn: socketAddress portNumber
 		backlogSize: aNumberOfConnections
-"		interface: socketAddress hostAddress".
- 	^self! !
+		interface: socketAddress hostAddress.! !
 
 !SpSocket methodsFor: 'private' stamp: 'JM 4/14/2007 21:19'!
 onNativeclientSocket: aNativeSocket for: aServerSocket
